@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 from datetime import date
 from app.db.session import Base
@@ -8,6 +8,7 @@ class appointment(Base):
 
     id = Column(Integer, primary_key=True)
     datetime = Column(DateTime, nullable=False)
+    status = Column(Enum("confirmed", "waiting"), nullable="False")
     purpose_of_visit = Column(String, nullable=False)
     planned_assessment = Column(String, nullable=True)
     session_summary = Column(String, nullable=True)
@@ -16,4 +17,4 @@ class appointment(Base):
 
     psychiatrist = relationship("Psychiatrist", back_populates="appointments")
     patient = relationship("Patient", back_populates="appointments")
-    diagnosis = relationship("Diagnosis", back_populates="appointment")
+    diagnoses = relationship("Diagnosis", back_populates="appointments")

@@ -1,12 +1,20 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Text
 from app.db.session import Base
+from sqlalchemy.orm import relationship
+import enum
+
+class UserRole(enum.Enum):
+    PATIENT = "PATIENT"
+    PSYCHIATRIST = "PSYCHIATRIST"
+    ADMIN = "ADMIN"
 
 class User(Base):
-    __tablename__ = "examples"
+    __tablename__ = "users"
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    age = Column(Integer)
-    email = Column(String)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    role = Column(Enum(UserRole), nullable=False)
+
+    patient = relationship("Patient", back_populates="user", uselist=False)
+    psychiatrist = relationship("Psychiatrist", back_populates="user", uselist=False)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.db.session import Base
@@ -40,3 +40,7 @@ class Patient(Base):
     def latest_medication_id(self):
         latest_medication = max(self.medications, key=lambda m: m.start_date, default=None)
         return latest_medication.id if latest_medication else None
+
+    @hybrid_property
+    def photo_url(self):
+        return f"https://ui-avatars.com/api/?name={self.name}&background=random&rounded=true&bold=true"

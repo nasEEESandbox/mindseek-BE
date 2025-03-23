@@ -2,6 +2,9 @@ from pydantic import BaseModel, EmailStr
 from datetime import date
 from typing import List
 
+from app.utils.constant import Gender
+
+
 class PatientResponse(BaseModel):
     id: int
     display_id: str
@@ -9,6 +12,7 @@ class PatientResponse(BaseModel):
     government_id: str
     name: str
     dob: date
+    gender: Gender
     phone_number: str
     blood_group: str
     marital_status: str
@@ -34,6 +38,7 @@ class PatientCreate(BaseModel):
     government_id: str
     name: str
     dob: date
+    gender: Gender
     phone_number: str
     blood_group: str
     marital_status: str
@@ -51,9 +56,11 @@ class PatientCreate(BaseModel):
 class PatientUpdate(BaseModel):
     email: EmailStr | None
     name: str | None
+    display_id: str | None
     phone_number: str | None
     dob: date | None
     blood_group: str | None
+    gender: Gender | None
     marital_status: str | None
     occupation: str | None
     insurance_provider: str | None

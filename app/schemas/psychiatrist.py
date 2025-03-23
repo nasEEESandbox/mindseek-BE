@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr
 from datetime import date
-from app.schemas.psychiatrist_availability import PsychiatristAvailabilityCreate
+
+from typing import List, Optional
+
+from app.schemas.psychiatrist_availability import PsychiatristAvailabilityCreate, PsychiatristAvailabilityResponse
 from app.utils.constant import Gender
 
 
@@ -18,7 +21,7 @@ class PsychiatristResponse(BaseModel):
     consultation_fee: str
     age: int
     photo_url: str
-    availability: PsychiatristAvailabilityCreate
+    availability: List[PsychiatristAvailabilityResponse]
 
     class Config:
         orm_mode = True
@@ -33,7 +36,7 @@ class PsychiatristCreate(BaseModel):
     license_number: str
     specialization: str
     consultation_fee: str
-    availability: PsychiatristAvailabilityCreate
+    availability: List[PsychiatristAvailabilityCreate]
 
 class PsychiatristUpdate(BaseModel):
     email: EmailStr | None

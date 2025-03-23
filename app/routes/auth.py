@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.schemas.user import UserResponse, UserCreate, UserLogin
+from app.schemas.user import UserResponse, UserCreate, UserLogin, UserUpdatePassword
 from app.db.models.user import User
 from app.core.security import get_password_hash, verify_password
 
@@ -41,5 +41,31 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
+
+    return db_user
+
+@router.put("/change-password", response_model=UserResponse)
+def change_password(user: UserUpdatePassword, db: Session = Depends(get_db)):
+    if (user.email and user.nip) or (not user.email and not user.nip):
+        raise HTTPException(status_code=400, detail="Either email or nip must be provided")
+
+    if user.new_password != user.confirm_password:
+        raise HTTPException(status_code=400, detail="New password and confirm password do not match")
+
+    db_user = None
+    if user.email:
+        db_user = db.query(User).filter(User.email == user.email).first()
+    if user.nip:
+        db_user = db.query(User).filter(User.nip == user.nip).first()
+
+    if user.password and not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_user.hashed_password = get_password_hash(user.new_password)
+    db.commit()
+    db.refresh(db_user)
 
     return db_user

@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.db.session import Base
+from app.utils.constant import Gender
+
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -12,6 +14,7 @@ class Patient(Base):
     email = Column(String, nullable=True, unique=True)
     name = Column(String, nullable=True)
     dob = Column(Date, nullable=True)
+    gender = Column(Enum(Gender), nullable=True)
     phone_number = Column(String, nullable=True)
     blood_group = Column(String, nullable=True)
     marital_status = Column(String, nullable=True)

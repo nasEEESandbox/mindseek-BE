@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.models.psychiatrist import Psychiatrist
+from app.db.models.psychiatrist_availability import PsychiatristAvailability
 from app.db.session import get_db
 from app.schemas.psychiatrist import PsychiatristUpdate, PsychiatristCreate, PsychiatristResponse
-from app.schemas.psychiatrist_availability import PsychiatristAvailabilityUpdate
+from app.schemas.psychiatrist_availability import PsychiatristAvailabilityUpdate, PsychiatristAvailabilityResponse, PsychiatristAvailabilityCreate
 
 router = APIRouter()
 
@@ -24,7 +25,7 @@ def read_psychiatrist(psychiatrist_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=PsychiatristResponse)
 def create_psychiatrist(psychiatrist: PsychiatristCreate, db: Session = Depends(get_db)):
-    psychiatrist = Psychiatrist(**psychiatrist.dict())
+    psychiatrist = Psychiatrist(**psychiatrist.model_dump())
     db.add(psychiatrist)
     db.commit()
     db.refresh(psychiatrist)
@@ -42,9 +43,8 @@ def update_psychiatrist(psychiatrist_id: int, psychiatrist_data: PsychiatristUpd
     if psychiatrist_data.nip:
         psychiatrist.user.nip = psychiatrist_data.nip
 
-
     db.query(Psychiatrist).filter(Psychiatrist.id == psychiatrist_id).update(
-        psychiatrist_data.dict(exclude_unset=True, exclude={"email", "nip"})
+        psychiatrist_data.model_dump(exclude_unset=True, exclude={"email", "nip"})
     )
 
     db.commit()
@@ -61,20 +61,35 @@ def delete_psychiatrist(psychiatrist_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Psychiatrist deleted successfully"}
 
+@router.get("/{psychiatrist_id}/availability", response_model=PsychiatristAvailabilityResponse)
+def read_psychiatrist_availability(psychiatrist_id: int, db: Session = Depends(get_db)):
+    psychiatrist = db.query(Psychiatrist).filter(Psychiatrist.id == psychiatrist_id).first()
+    if psychiatrist is None:
+        raise HTTPException(status_code=404, detail="Psychiatrist not found")
+    return psychiatrist.availability
+
 @router.put("/{psychiatrist_id}/availability", response_model=PsychiatristResponse)
-def update_psychiatrist_availability(psychiatrist_id: int, psychiatrist_data: PsychiatristUpdate, db: Session = Depends(get_db)):
+def update_psychiatrist_availability(
+    psychiatrist_id: int,
+    availability_data: PsychiatristAvailabilityUpdate,
+    db: Session = Depends(get_db)
+):
+    # ✅ Ensure the psychiatrist exists
     psychiatrist = db.query(Psychiatrist).filter(Psychiatrist.id == psychiatrist_id).first()
     if not psychiatrist:
         raise HTTPException(status_code=404, detail="Psychiatrist not found")
 
-    if psychiatrist_data.availability:
-        psychiatrist.availability = psychiatrist_data.availability
+    # ✅ Find and update the psychiatrist's availability
+    availability = db.query(PsychiatristAvailability).filter(
+        PsychiatristAvailability.psychiatrist_id == psychiatrist_id
+    ).first()
+
+    if not availability:
+        raise HTTPException(status_code=404, detail="Availability not found")
+
+    for field, value in availability_data.model_dump(exclude_unset=True).items():
+        setattr(availability, field, value)
 
     db.commit()
     db.refresh(psychiatrist)
-
     return psychiatrist
-
-
-
-

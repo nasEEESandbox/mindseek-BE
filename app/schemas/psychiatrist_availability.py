@@ -5,7 +5,6 @@ from app.utils.constant import Weekday
 
 
 class PsychiatristAvailabilityCreate(BaseModel):
-    psychiatrist_id: int
     day_of_week: Weekday
     start_time: time
     end_time: time

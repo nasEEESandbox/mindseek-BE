@@ -7,6 +7,6 @@ class Medicine(Base):
     __tablename__ = "medicines"
 
     id = Column(Integer, primary_key=True, index=True)
-    medicine_name = Column(String, nullable=True, index=True)
+    medicine_name = Column(String, nullable=True, unique=True, index=True)
 
     medications = relationship("Medication", back_populates="medicines")

@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean
+from sqlalchemy import Column, Integer, String, Date, Boolean, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import date
 from app.db.session import Base
-from app.utils.constant import default_photo_url
+from app.utils.constant import default_photo_url, Gender
 
 
 class Psychiatrist(Base):
@@ -16,7 +16,7 @@ class Psychiatrist(Base):
     display_id = Column(String, nullable=True)
     government_id = Column(String, nullable=True)
     name = Column(String, nullable=True)
-    gender = Column(String, nullable=True)
+    gender = Column(Enum(Gender), nullable=True)
     dob = Column(Date, nullable=True)
     phone_number = Column(String, nullable=True)
     license_number = Column(String, nullable=True)

@@ -9,6 +9,7 @@ from app.db.models.psychiatrist_availability import PsychiatristAvailability
 from app.db.session import get_db
 from app.schemas.psychiatrist import PsychiatristUpdate, PsychiatristCreate, PsychiatristResponse
 from app.schemas.psychiatrist_availability import PsychiatristAvailabilityUpdate, PsychiatristAvailabilityResponse, PsychiatristAvailabilityCreate
+from app.utils.constant import generate_nip
 
 router = APIRouter()
 
@@ -28,14 +29,10 @@ from app.db.models.psychiatrist_availability import PsychiatristAvailability
 
 @router.post("/", response_model=PsychiatristResponse)
 def create_psychiatrist(psychiatrist: PsychiatristCreate, db: Session = Depends(get_db)):
-    print("psy", psychiatrist)
-    print("psy gen", psychiatrist.gender.value)
-    print(type(psychiatrist.gender.value))
-    print("psy pass", psychiatrist.password)
 
     new_psychiatrist = Psychiatrist(
-        **psychiatrist.model_dump(exclude={"availability", "gender", "password"}, exclude_unset=True),
-        gender=psychiatrist.gender.value if psychiatrist.gender else None,
+        **psychiatrist.model_dump(exclude={"availability", "password", "nip"}, exclude_unset=True),
+        nip = generate_nip(),
         hashed_password=get_password_hash(psychiatrist.password)
     )
     db.add(new_psychiatrist)

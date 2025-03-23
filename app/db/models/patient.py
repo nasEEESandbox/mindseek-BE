@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.db.session import Base
-from app.utils.constant import Gender, default_photo_url
+from app.utils.constant import default_photo_url
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -13,7 +13,7 @@ class Patient(Base):
     email = Column(String, nullable=True, unique=True)
     name = Column(String, nullable=True)
     dob = Column(Date, nullable=True)
-    gender = Column(Enum(Gender), nullable=True)
+    gender = Column(String, nullable=True)
     phone_number = Column(String, nullable=True)
     blood_group = Column(String, nullable=True)
     marital_status = Column(String, nullable=True)
@@ -32,15 +32,21 @@ class Patient(Base):
 
     @hybrid_property
     def appointment_ids(self):
+        if (self.appointments is None) or (len(self.appointments) == 0):
+            return []
         return [appointment.id for appointment in self.appointments]
     
     @hybrid_property
     def latest_diagnosis_id(self):
+        if (self.diagnoses is None) or (len(self.diagnoses) == 0):
+            return None
         latest_diagnosis = max(self.diagnoses, key=lambda d: d.diagnosed_date, default=None)
         return latest_diagnosis.id if latest_diagnosis else None
     
     @hybrid_property
     def latest_medication_id(self):
+        if (self.medications is None) or (len(self.medications) == 0):
+            return None
         latest_medication = max(self.medications, key=lambda m: m.start_date, default=None)
         return latest_medication.id if latest_medication else None
 

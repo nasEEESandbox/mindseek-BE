@@ -15,6 +15,7 @@ class PsychiatristResponse(BaseModel):
     name: str | None
     gender: Gender | None
     dob: date | None
+    nip: str | None
     phone_number: str | None
     license_number: str | None
     specialization: str | None

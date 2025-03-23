@@ -15,7 +15,9 @@ def read_patients(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=PatientResponse)
 def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
+
     db_patient = Patient(**patient.dict())
+
     db.add(db_patient)
     db.commit()
     db.refresh(db_patient)

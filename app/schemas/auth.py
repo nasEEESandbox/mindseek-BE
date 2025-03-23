@@ -1,21 +1,19 @@
 from pydantic import BaseModel, EmailStr, model_validator
-from typing import Optional
 
-class UserResponse(BaseModel):
-    id: int
+class AuthResponse(BaseModel):
     email: EmailStr
     nip: str
-    role: str
+    is_admin: bool
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
-class UserLogin(BaseModel):
-    email: Optional[EmailStr] = None
-    nip: Optional[str] = None
+class AuthLogin(BaseModel):
+    email: EmailStr | None
+    nip: str | None
     password: str
 
-    @model_validator(mode="before")  # ✅ Correct mode
+    @model_validator(mode="before")
     def validate_credentials(self, values):
         email = values.get("email")
         nip = values.get("nip")
@@ -25,15 +23,17 @@ class UserLogin(BaseModel):
 
         return values
 
-class UserCreate(BaseModel):
+    class Config:
+        orm_mode = True
+
+class AuthRegister(BaseModel):
     email: EmailStr
     password: str
-    role: str
 
     class Config:
         orm_mode = True
 
-class UserUpdatePassword(BaseModel):
+class AuthUpdatePassword(BaseModel):
     email: EmailStr | None
     nip: str | None
     password: str | None

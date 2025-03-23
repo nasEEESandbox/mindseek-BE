@@ -1,13 +1,24 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import date
+
+# from app.db.models.appointment import Appointment
+
+# from app.db.models.psychiatrist_availability import PsychiatristAvailability
+
+# from app.db.models.patient import Patient
 from app.db.session import Base
+from app.utils.constant import default_photo_url
+
 
 class Psychiatrist(Base):
     __tablename__ = "psychiatrists"
 
-    id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=True)
+    hashed_password = Column(String, nullable=False)
+    nip = Column(String, unique=True, index=True, nullable=True, default='000000-0000')
     display_id = Column(String, nullable=True)
     government_id = Column(String, nullable=True)
     name = Column(String, nullable=True)
@@ -17,9 +28,9 @@ class Psychiatrist(Base):
     license_number = Column(String, nullable=True)
     specialization = Column(String, nullable=True)
     consultation_fee = Column(String, nullable=True)
+    is_admin = Column(Boolean, nullable=True, default=False)
 
     availability = relationship("PsychiatristAvailability", back_populates="psychiatrist")
-    user = relationship("User", back_populates="psychiatrist")
     patients = relationship("Patient", back_populates="psychiatrist")
     appointments = relationship("Appointment", back_populates="psychiatrist")
 
@@ -32,4 +43,4 @@ class Psychiatrist(Base):
 
     @hybrid_property
     def photo_url(self):
-        return f"https://ui-avatars.com/api/?name={self.name}&background=random&rounded=true&bold=true"
+        return default_photo_url(self.name)

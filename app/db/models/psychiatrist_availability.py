@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.utils.constant import Weekday
 
+# from app.db.models.psychiatrist import Psychiatrist
+
 
 class PsychiatristAvailability(Base):
     __tablename__ = "psychiatrist_availabilities"

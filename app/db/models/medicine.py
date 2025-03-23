@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from datetime import date
+
+# from app.db.models.medication import Medication
 from app.db.session import Base
 
 class Medicine(Base):

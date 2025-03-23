@@ -1,10 +1,24 @@
 import os
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load environment variables from .env file
 load_dotenv()
 
+def setup_cors(app):
+    origins = [
+        "http://localhost:3000",  # React/Vue/Angular (local)
+        "https://yourfrontend.com"  # Deployed frontend URL
+    ]
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],  # Allow all HTTP methods
+        allow_headers=["*"],  # Allow all headers
+    )
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "MindSeek API"

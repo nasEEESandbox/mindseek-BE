@@ -1,8 +1,11 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import date
 from app.db.session import Base
 from app.utils.constant import AppointmentStatus
+
+# from app.db.models.diagnosis import Diagnosis
+# from app.db.models.patient import Patient
+# from app.db.models.psychiatrist import Psychiatrist
 
 
 class Appointment(Base):

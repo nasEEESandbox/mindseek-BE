@@ -2,8 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.db.session import Base
-from app.utils.constant import Gender
-
+from app.utils.constant import Gender, default_photo_url
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -47,4 +46,4 @@ class Patient(Base):
 
     @hybrid_property
     def photo_url(self):
-        return f"https://ui-avatars.com/api/?name={self.name}&background=random&rounded=true&bold=true"
+        return default_photo_url(self.name)

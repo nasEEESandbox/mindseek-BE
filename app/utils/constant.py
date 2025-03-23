@@ -1,9 +1,6 @@
 import enum
+import random
 
-
-class UserRole(enum.Enum):
-    PSYCHIATRIST = "Psychiatrist"
-    ADMIN = "Admin"
 
 class Gender(enum.Enum):
     MALE = "Male"
@@ -26,3 +23,11 @@ class AppointmentStatus(enum.Enum):
     CONFIRMED = "Confirmed"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
+
+def default_photo_url(name: str) -> str:
+    return f"https://ui-avatars.com/api/?name={name}&background=random&rounded=true&bold=true"
+
+def generate_nip() -> str:
+    part1 = random.randint(100000, 999999)
+    part2 = random.randint(1000, 9999)
+    return f"{part1}-{part2}"

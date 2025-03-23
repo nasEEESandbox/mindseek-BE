@@ -34,7 +34,6 @@ class PatientResponse(BaseModel):
 
 class PatientCreate(BaseModel):
     email: EmailStr
-    display_id: str
     government_id: str
     name: str
     dob: date

@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash
 from app.db.models.psychiatrist import Psychiatrist
-from app.db.models.psychiatrist_availability import PsychiatristAvailability
 from app.db.session import get_db
 from app.schemas.psychiatrist import PsychiatristUpdate, PsychiatristCreate, PsychiatristResponse
 from app.schemas.psychiatrist_availability import PsychiatristAvailabilityUpdate, PsychiatristAvailabilityResponse, PsychiatristAvailabilityCreate
@@ -29,10 +28,18 @@ from app.db.models.psychiatrist_availability import PsychiatristAvailability
 
 @router.post("/", response_model=PsychiatristResponse)
 def create_psychiatrist(psychiatrist: PsychiatristCreate, db: Session = Depends(get_db)):
+    existed_email = db.query(Psychiatrist).filter(Psychiatrist.email == psychiatrist.email).first()
+    if existed_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    new_nip = generate_nip()
+    while db.query(Psychiatrist).filter(Psychiatrist.nip == new_nip).first():
+        new_nip = generate_nip()
 
     new_psychiatrist = Psychiatrist(
         **psychiatrist.model_dump(exclude={"availability", "password", "nip"}, exclude_unset=True),
-        nip = generate_nip(),
+        nip = new_nip,
+        display_id = new_nip,
         hashed_password=get_password_hash(psychiatrist.password)
     )
     db.add(new_psychiatrist)
@@ -51,7 +58,6 @@ def create_psychiatrist(psychiatrist: PsychiatristCreate, db: Session = Depends(
     db.refresh(new_psychiatrist)
 
     return new_psychiatrist
-
 
 @router.put("/{psychiatrist_id}", response_model=PsychiatristResponse)
 def update_psychiatrist(psychiatrist_id: int, psychiatrist_data: PsychiatristUpdate, db: Session = Depends(get_db)):

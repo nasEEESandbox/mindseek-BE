@@ -2,7 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.db.session import Base
-from app.utils.constant import default_photo_url
+from app.utils.constant import default_photo_url, Gender
+
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -13,7 +14,7 @@ class Patient(Base):
     email = Column(String, nullable=True, unique=True)
     name = Column(String, nullable=True)
     dob = Column(Date, nullable=True)
-    gender = Column(String, nullable=True)
+    gender = Column(Enum(Gender), nullable=True)
     phone_number = Column(String, nullable=True)
     blood_group = Column(String, nullable=True)
     marital_status = Column(String, nullable=True)
@@ -26,9 +27,9 @@ class Patient(Base):
     psychiatrist_id = Column(Integer, ForeignKey("psychiatrists.id"))
 
     psychiatrist = relationship("Psychiatrist", back_populates="patients")
-    appointments = relationship("Appointment", back_populates="patient")
-    medications = relationship("Medication", back_populates="patient")
-    diagnoses = relationship("Diagnosis", back_populates="patients")
+    appointments = relationship("Appointment", back_populates="patient", cascade="all, delete")
+    medications = relationship("Medication", back_populates="patient", cascade="all, delete")
+    diagnoses = relationship("Diagnosis", back_populates="patients", cascade="all, delete")
 
     @hybrid_property
     def appointment_ids(self):

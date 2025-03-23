@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mindseek.db" uuid="597a0885-e58f-4c41-b44b-c4b87aeb5482">
+    <data-source source="LOCAL" name="mindseek.db" uuid="6d0af08f-a13a-449d-ba50-f2a2044e8a54">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>

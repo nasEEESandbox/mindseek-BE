@@ -30,7 +30,6 @@ class PsychiatristResponse(BaseModel):
 class PsychiatristCreate(BaseModel):
     government_id: str
     email: EmailStr
-    display_id: str
     name: str
     password: str
     gender: Gender

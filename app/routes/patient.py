@@ -1,10 +1,14 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
+
+from app.db.models import Psychiatrist
 from app.db.session import get_db
 from app.schemas.patient import PatientResponse, PatientCreate, PatientUpdate
 from app.db.models.patient import Patient
+from app.utils.constant import generate_nip
 
 router = APIRouter()
 
@@ -15,12 +19,26 @@ def read_patients(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=PatientResponse)
 def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
+    display_id = generate_nip()
+    while db.query(Patient).filter(Patient.display_id == display_id).first():
+        display_id = generate_nip()
 
-    db_patient = Patient(**patient.dict())
+    psychiatrist = db.query(Psychiatrist).order_by(func.random()).first()
+    if not psychiatrist:
+        raise HTTPException(status_code=400, detail="No psychiatrists available")
+
+    db_patient = Patient(
+        **patient.model_dump(exclude={"display_id", "psychiatrist_id"}, exclude_unset=True),
+        display_id=display_id,
+        psychiatrist_id = int(psychiatrist.id)
+    )
+
+    psychiatrist.patients.append(db_patient)
 
     db.add(db_patient)
     db.commit()
     db.refresh(db_patient)
+
     return db_patient
 
 @router.get("/{patient_id}", response_model=PatientResponse)

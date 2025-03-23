@@ -5,10 +5,10 @@ from app.db.session import Base
 class Medication(Base):
     __tablename__ = "medications"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     medicine_id = Column(Integer, ForeignKey("medicines.id"))
-    dosage = Column(String, nullable=False)
-    start_date = Column(Date, nullable=False)
+    dosage = Column(String, nullable=True)
+    start_date = Column(Date, nullable=True)
     end_date = Column(Date, nullable=True)
     notes = Column(String, nullable=True)
     patient_id = Column(Integer, ForeignKey("patients.id"))

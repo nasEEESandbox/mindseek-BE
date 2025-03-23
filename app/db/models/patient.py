@@ -6,11 +6,13 @@ from app.db.session import Base
 class Patient(Base):
     __tablename__ = "patients"
 
-    id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    government_id = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    display_id = Column(String, unique=True, nullable=True)
+    government_id = Column(String, nullable=True)
+    email = Column(String, nullable=True, unique=True)
     name = Column(String, nullable=True)
     dob = Column(Date, nullable=True)
-    phone_number = Column(String, nullable=False)
+    phone_number = Column(String, nullable=True)
     blood_group = Column(String, nullable=True)
     marital_status = Column(String, nullable=True)
     occupation = Column(String, nullable=True)
@@ -21,7 +23,6 @@ class Patient(Base):
     emergency_contact_relationship = Column(String, nullable=True)
     psychiatrist_id = Column(Integer, ForeignKey("psychiatrists.id"))
 
-    user = relationship("User", back_populates="patient")
     psychiatrist = relationship("Psychiatrist", back_populates="patients")
     appointments = relationship("Appointment", back_populates="patient")
     medications = relationship("Medication", back_populates="patient")

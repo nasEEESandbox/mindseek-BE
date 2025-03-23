@@ -1,22 +1,30 @@
-from pydantic import BaseModel, EmailStr
-from app.db.models.user import User
-from app.db.models.patient import Patient
-from app.db.models.psychiatrist import Psychiatrist
+from pydantic import BaseModel, EmailStr, model_validator
+from typing import Optional
 
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
+    nip: str
     role: str
 
     class Config:
         from_attributes = True
 
-class PatientCreate(BaseModel):
-    name: str
-    email: EmailStr
-    phone_number: str
+class UserLogin(BaseModel):
+    email: Optional[EmailStr] = None
+    nip: Optional[str] = None
+    password: str
 
-class PatientUpdate(BaseModel):
-    name: str
+    @model_validator()
+    def validate_credentials(self, v):
+        if not v.email and not v.nip:
+            raise ValueError("Email or NIP is required")
+        return v
+
+class UserCreate(BaseModel):
     email: EmailStr
-    phone_number: str
+    password: str
+    role: str
+
+    class Config:
+        orm_mode = True

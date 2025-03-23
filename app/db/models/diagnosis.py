@@ -4,20 +4,17 @@ from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateT
 from sqlalchemy.orm import relationship
 from datetime import date
 from app.db.session import Base
+from app.utils.constant import Severity
 
-class Severity(enum.Enum):
-    SEVERE = "SEVERE"
-    NORMAL = "NORMAL"
-    EASY = "EASY"
 
 class Diagnosis(Base):
     __tablename__ = "diagnoses"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, unique=True)
     appointment_id = Column(Integer, ForeignKey("appointments.id"))
-    diagnosed_date = Column(DateTime, nullable=False)
+    diagnosed_date = Column(DateTime, nullable=True)
     status = Column(String, nullable=True)
-    severity = Column(Enum(Severity), nullable=False)
+    severity = Column(Enum(Severity), nullable=True)
 
     appointments = relationship("Appointment", back_populates="diagnoses")
     patients = relationship("Patient", back_populates="diagnoses")

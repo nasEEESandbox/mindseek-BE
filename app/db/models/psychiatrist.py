@@ -9,7 +9,7 @@ from app.utils.constant import default_photo_url
 class Psychiatrist(Base):
     __tablename__ = "psychiatrists"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, unique=True, nullable=True)
     hashed_password = Column(String, nullable=False)
     nip = Column(String, unique=True, index=True, nullable=True, default='000000-0000')

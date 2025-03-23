@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import get_password_hash
 from app.db.models.psychiatrist import Psychiatrist
 from app.db.models.psychiatrist_availability import PsychiatristAvailability
 from app.db.session import get_db
@@ -23,13 +24,37 @@ def read_psychiatrist(psychiatrist_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Psychiatrist not found")
     return psychiatrist
 
+from app.db.models.psychiatrist_availability import PsychiatristAvailability
+
 @router.post("/", response_model=PsychiatristResponse)
 def create_psychiatrist(psychiatrist: PsychiatristCreate, db: Session = Depends(get_db)):
-    psychiatrist = Psychiatrist(**psychiatrist.model_dump())
-    db.add(psychiatrist)
+    print("psy", psychiatrist)
+    print("psy gen", psychiatrist.gender.value)
+    print(type(psychiatrist.gender.value))
+    print("psy pass", psychiatrist.password)
+
+    new_psychiatrist = Psychiatrist(
+        **psychiatrist.model_dump(exclude={"availability", "gender", "password"}, exclude_unset=True),
+        gender=psychiatrist.gender.value if psychiatrist.gender else None,
+        hashed_password=get_password_hash(psychiatrist.password)
+    )
+    db.add(new_psychiatrist)
     db.commit()
-    db.refresh(psychiatrist)
-    return psychiatrist
+    db.refresh(new_psychiatrist)
+
+    availability_data = psychiatrist.availability or []
+    for availability in availability_data:
+        availability_instance = PsychiatristAvailability(
+            psychiatrist_id=new_psychiatrist.id,
+            **availability.model_dump(exclude_unset=True)
+        )
+        db.add(availability_instance)
+
+    db.commit()
+    db.refresh(new_psychiatrist)
+
+    return new_psychiatrist
+
 
 @router.put("/{psychiatrist_id}", response_model=PsychiatristResponse)
 def update_psychiatrist(psychiatrist_id: int, psychiatrist_data: PsychiatristUpdate, db: Session = Depends(get_db)):

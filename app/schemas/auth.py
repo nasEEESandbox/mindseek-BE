@@ -9,19 +9,20 @@ class AuthResponse(BaseModel):
         orm_mode = True
 
 class AuthLogin(BaseModel):
-    email: EmailStr | None
+    email: str | None
     nip: str | None
     password: str
 
     @model_validator(mode="before")
-    def validate_credentials(self, values):
-        email = values.get("email")
-        nip = values.get("nip")
+    def validate_credentials(cls, data):
+        data = data.data if hasattr(data, "data") else data  # ✅ Fix for Pydantic v2
+        email = data.get("email")
+        nip = data.get("nip")
 
         if not email and not nip:
             raise ValueError("Either Email or NIP is required")
 
-        return values
+        return data
 
     class Config:
         orm_mode = True

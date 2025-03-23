@@ -5,8 +5,13 @@ from app.schemas.auth import AuthLogin, AuthUpdatePassword, AuthRegister, AuthRe
 from app.db.models.psychiatrist import Psychiatrist
 from app.core.security import get_password_hash, verify_password
 from app.utils.constant import generate_nip
+import re
 
 router = APIRouter()
+
+def is_valid_email(email: str) -> bool:
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return re.match(email_regex, email) is not None
 
 @router.post("/register", response_model=AuthResponse)
 def register_user(user_data: AuthRegister, db: Session = Depends(get_db)):
@@ -42,6 +47,9 @@ def login_user(user: AuthLogin, db: Session = Depends(get_db)):
     if (user.email and user.nip) or (not user.email and not user.nip):
         raise HTTPException(status_code=400, detail="Either email or nip must be provided")
     if user.email:
+        if not is_valid_email(user.email):
+            raise HTTPException(status_code=400, detail="Invalid email format")
+
         db_user = db.query(Psychiatrist).filter(Psychiatrist.email == user.email).first()
     else:
         db_user = db.query(Psychiatrist).filter(Psychiatrist.nip == user.nip).first()

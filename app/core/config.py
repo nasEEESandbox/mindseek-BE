@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     API_VERSION: str = "v1"
 
     # Database Settings
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./db.sqlite3")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./mindseek.db")
 
     # Security Keys
     SECRET_KEY: str = os.getenv("SECRET_KEY", "supersecretkey")

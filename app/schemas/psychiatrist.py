@@ -9,18 +9,18 @@ from app.utils.constant import Gender
 
 class PsychiatristResponse(BaseModel):
     id: int
-    display_id: str
-    email: EmailStr
-    government_id: str
-    name: str
-    gender: Gender
-    dob: date
-    phone_number: str
-    license_number: str
-    specialization: str
-    consultation_fee: str
-    age: int
-    photo_url: str
+    display_id: str | None
+    email: EmailStr | None
+    government_id: str | None
+    name: str | None
+    gender: Gender | None
+    dob: date | None
+    phone_number: str | None
+    license_number: str | None
+    specialization: str | None
+    consultation_fee: str | None
+    age: int | None
+    photo_url: str | None
     availability: List[PsychiatristAvailabilityResponse]
 
     class Config:

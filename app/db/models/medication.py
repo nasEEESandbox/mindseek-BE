@@ -2,9 +2,6 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 
-# from app.db.models.medicine import Medicine
-# from app.db.models.patient import Patient
-
 class Medication(Base):
     __tablename__ = "medications"
 

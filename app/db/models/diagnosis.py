@@ -3,9 +3,6 @@ from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.utils.constant import Severity
 
-# from app.db.models.appointment import Appointment
-# from app.db.models.patient import Patient
-
 
 class Diagnosis(Base):
     __tablename__ = "diagnoses"

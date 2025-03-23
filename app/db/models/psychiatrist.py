@@ -2,12 +2,6 @@ from sqlalchemy import Column, Integer, String, Date, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import date
-
-# from app.db.models.appointment import Appointment
-
-# from app.db.models.psychiatrist_availability import PsychiatristAvailability
-
-# from app.db.models.patient import Patient
 from app.db.session import Base
 from app.utils.constant import default_photo_url
 

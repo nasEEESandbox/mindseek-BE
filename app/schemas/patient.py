@@ -6,27 +6,27 @@ from app.utils.constant import Gender
 
 
 class PatientResponse(BaseModel):
-    id: int
-    display_id: str
-    email: EmailStr
-    government_id: str
-    name: str
-    dob: date
-    gender: Gender
-    phone_number: str
-    blood_group: str
-    marital_status: str
-    occupation: str
-    insurance_provider: str
-    address: str
-    emergency_contact_name: str
-    emergency_contact_number: str
-    emergency_contact_relationship: str
-    psychiatrist_id: int
-    appointment_ids: List[int]
-    latest_diagnosis_id: int
-    latest_medication_id: int
-    photo_url: str
+    id: int | None
+    display_id: str | None
+    email: EmailStr | None
+    government_id: str | None
+    name: str | None
+    dob: date | None
+    gender: Gender | None
+    phone_number: str | None
+    blood_group: str | None
+    marital_status: str | None
+    occupation: str | None
+    insurance_provider: str | None
+    address: str | None
+    emergency_contact_name: str | None
+    emergency_contact_number: str | None
+    emergency_contact_relationship: str | None
+    psychiatrist_id: int | None
+    appointment_ids: List[int] | None
+    latest_diagnosis_id: int | None
+    latest_medication_id: int | None
+    photo_url: str | None
 
     class Config:
         from_attributes = True

@@ -3,10 +3,6 @@ from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.utils.constant import AppointmentStatus
 
-# from app.db.models.diagnosis import Diagnosis
-# from app.db.models.patient import Patient
-# from app.db.models.psychiatrist import Psychiatrist
-
 
 class Appointment(Base):
     __tablename__ = "appointments"

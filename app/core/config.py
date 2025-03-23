@@ -8,16 +8,16 @@ load_dotenv()
 
 def setup_cors(app):
     origins = [
-        "http://localhost:3000",  # React/Vue/Angular (local)
-        "https://yourfrontend.com"  # Deployed frontend URL
+        "http://localhost:3000",
+        "https://mindseek.vercel.app"
     ]
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
-        allow_methods=["*"],  # Allow all HTTP methods
-        allow_headers=["*"],  # Allow all headers
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
 class Settings(BaseSettings):
